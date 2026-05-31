@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FootballHub</title>
+<style>
+body{
+font-family:Arial;
+margin:20px;
+background:#f5f5f5;
+}
+table{
+border-collapse:collapse;
+width:100%;
+background:white;
+}
+th,td{
+border:1px solid #ddd;
+padding:8px;
+text-align:left;
+}
+th{
+background:#e30613;
+color:white;
+}
+</style>
+</head>
+<body>
+
+<h1>⚽ Bundesliga Tabelle</h1>
+
+<table id="table">
+<thead>
+<tr>
+<th>#</th>
+<th>Verein</th>
+<th>Punkte</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+const API_KEY = "DEIN_TOKEN";
+fetch(
+"https://api.football-data.org/v4/competitions/BL1/standings",
+{
+headers:{
+"X-Auth-Token":API_KEY
+}
+}
+)
+.then(res=>res.json())
+.then(data=>{
+
+const tbody=document.querySelector("tbody");
+
+data.standings[0].table.forEach(team=>{
+
+tbody.innerHTML += `
+<tr>
+<td>${team.position}</td>
+<td>${team.team.name}</td>
+<td>${team.points}</td>
+</tr>
+`;
+
+});
+
+});
+</script>
+
+</body>
+</html>
