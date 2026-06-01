@@ -3,74 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FootballHub</title>
+<title>WM 2026 Spielplan</title>
 
 <style>
 body{
-font-family:Arial,sans-serif;
-background:#111;
-color:white;
-padding:20px;
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+    margin:0;
+    padding:20px;
 }
 
 h1{
-text-align:center;
+    text-align:center;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
-background:#1c1c1c;
+.match{
+    background:#1c1c1c;
+    margin:10px auto;
+    padding:15px;
+    border-radius:10px;
+    max-width:800px;
 }
 
-th{
-background:red;
-padding:12px;
+.date{
+    color:#aaa;
+    margin-bottom:8px;
 }
 
-td{
-padding:10px;
-border-bottom:1px solid #333;
+.teams{
+    display:flex;
+    justify-content:space-between;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.score{
+    color:#ff4444;
 }
 </style>
 </head>
-
 <body>
 
-<h1>⚽ Bundesliga Tabelle</h1>
+<h1>🏆 FIFA WM 2026 – Spieltag 1</h1>
 
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>Team</th>
-<th>Punkte</th>
-</tr>
-</thead>
-
-<tbody id="tableBody"></tbody>
-</table>
+<div id="matches"></div>
 
 <script>
 
-fetch("https://www.openligadb.de/api/getbltable/bl1")
+fetch("https://api.openligadb.de/getmatchdata/wm26/2026/1")
 .then(response => response.json())
 .then(data => {
 
-const body = document.getElementById("tableBody");
+const container = document.getElementById("matches");
 
-data.forEach(team => {
+data.forEach(match => {
 
-body.innerHTML += `
-<tr>
-<td>${team.Platz}</td>
-<td>${team.TeamName}</td>
-<td>${team.Punkte}</td>
-</tr>
+let home = match.Team1.TeamName;
+let away = match.Team2.TeamName;
+
+let score = "- : -";
+
+if(match.MatchResults && match.MatchResults.length > 0){
+
+let result = match.MatchResults[match.MatchResults.length - 1];
+
+score = result.PointsTeam1 + " : " + result.PointsTeam2;
+}
+
+container.innerHTML += `
+<div class="match">
+<div class="date">${new Date(match.MatchDateTime).toLocaleString()}</div>
+<div class="teams">
+<span>${home}</span>
+<span class="score">${score}</span>
+<span>${away}</span>
+</div>
+</div>
 `;
 
 });
 
+})
+.catch(error => {
+document.getElementById("matches").innerHTML =
+"Fehler beim Laden der Daten.";
 });
 
 </script>
