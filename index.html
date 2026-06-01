@@ -51,44 +51,53 @@ h1{
 
 <script>
 
-fetch("https://api.openligadb.de/getmatchdata/wm26/2026/1")
-.then(response => response.json())
-.then(data => {
+async function ladeSpiele() {
+    try {
+        const response = await fetch(
+            "https://api.allorigins.win/raw?url=https://api.openligadb.de/getmatchdata/wm26/2026/1"
+        );
 
-const container = document.getElementById("matches");
+        const spiele = await response.json();
 
-data.forEach(match => {
+        let html = "";
 
-let home = match.Team1.TeamName;
-let away = match.Team2.TeamName;
+        spiele.forEach(spiel => {
+            const heim = spiel.team1?.teamName || "-";
+            const gast = spiel.team2?.teamName || "-";
 
-let score = "- : -";
+            let ergebnis = "-";
 
-if(match.MatchResults && match.MatchResults.length > 0){
+            if (spiel.matchResults && spiel.matchResults.length > 0) {
+                const endstand = spiel.matchResults[spiel.matchResults.length - 1];
+                ergebnis = `${endstand.pointsTeam1}:${endstand.pointsTeam2}`;
+            }
 
-let result = match.MatchResults[match.MatchResults.length - 1];
+            html += `
+                <div style="
+                    background:#1c1c1c;
+                    padding:15px;
+                    margin:10px 0;
+                    border-radius:8px;
+                ">
+                    <strong>${heim}</strong>
+                    <span style="margin:0 10px;">vs</span>
+                    <strong>${gast}</strong>
+                    <br>
+                    Ergebnis: ${ergebnis}
+                </div>
+            `;
+        });
 
-score = result.PointsTeam1 + " : " + result.PointsTeam2;
+        document.getElementById("matches").innerHTML = html;
+
+    } catch (error) {
+        document.getElementById("matches").innerHTML =
+            "Fehler beim Laden der Daten.";
+        console.error(error);
+    }
 }
 
-container.innerHTML += `
-<div class="match">
-<div class="date">${new Date(match.MatchDateTime).toLocaleString()}</div>
-<div class="teams">
-<span>${home}</span>
-<span class="score">${score}</span>
-<span>${away}</span>
-</div>
-</div>
-`;
-
-});
-
-})
-.catch(error => {
-document.getElementById("matches").innerHTML =
-"Fehler beim Laden der Daten.";
-});
+ladeSpiele();
 
 </script>
 
