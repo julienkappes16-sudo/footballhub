@@ -1,105 +1,47 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WM 2026 Spielplan</title>
+Wenn du fragst „wo?“, dann meine ich direkt in deiner index.html.
 
-<style>
-body{
-    background:#111;
-    color:white;
-    font-family:Arial,sans-serif;
-    margin:0;
-    padding:20px;
-}
+Suche diesen Teil:
 
-h1{
-    text-align:center;
-}
+const response = await fetch(
+    "https://api.allorigins.win/raw?url=https://api.openligadb.de/getmatchdata/wm26/2026/1"
+);
 
-.match{
-    background:#1c1c1c;
-    margin:10px auto;
-    padding:15px;
-    border-radius:10px;
-    max-width:800px;
-}
+Das ist ungefähr bei Zeile 56 auf deinem Screenshot.
 
-.date{
-    color:#aaa;
-    margin-bottom:8px;
-}
-
-.teams{
-    display:flex;
-    justify-content:space-between;
-    font-size:20px;
-    font-weight:bold;
-}
-
-.score{
-    color:#ff4444;
-}
-</style>
-</head>
-<body>
-
-<h1>🏆 FIFA WM 2026 – Spieltag 1</h1>
+Für eine Spieltag-Auswahl musst du über diesem Bereich:
 
 <div id="matches"></div>
 
-<script>
+folgendes einfügen:
 
-async function ladeSpiele() {
-    try {
-        const response = await fetch(
-            "https://api.allorigins.win/raw?url=https://api.openligadb.de/getmatchdata/wm26/2026/1"
-        );
+<select id="spieltag">
+  <option value="1">Spieltag 1</option>
+  <option value="2">Spieltag 2</option>
+  <option value="3">Spieltag 3</option>
+</select>
 
-        const spiele = await response.json();
+<button onclick="ladeSpiele()">Laden</button>
 
-        let html = "";
+Also:
 
-        spiele.forEach(spiel => {
-            const heim = spiel.team1?.teamName || "-";
-            const gast = spiel.team2?.teamName || "-";
+<h1>🏆 FIFA WM 2026 – Spieltag 1</h1>
 
-            let ergebnis = "-";
+<select id="spieltag">
+  <option value="1">Spieltag 1</option>
+  <option value="2">Spieltag 2</option>
+  <option value="3">Spieltag 3</option>
+</select>
 
-            if (spiel.matchResults && spiel.matchResults.length > 0) {
-                const endstand = spiel.matchResults[spiel.matchResults.length - 1];
-                ergebnis = `${endstand.pointsTeam1}:${endstand.pointsTeam2}`;
-            }
+<button onclick="ladeSpiele()">Laden</button>
 
-            html += `
-                <div style="
-                    background:#1c1c1c;
-                    padding:15px;
-                    margin:10px 0;
-                    border-radius:8px;
-                ">
-                    <strong>${heim}</strong>
-                    <span style="margin:0 10px;">vs</span>
-                    <strong>${gast}</strong>
-                    <br>
-                    Ergebnis: ${ergebnis}
-                </div>
-            `;
-        });
+<div id="matches"></div>
 
-        document.getElementById("matches").innerHTML = html;
+Und dann im Script die feste 1 ersetzen:
 
-    } catch (error) {
-        document.getElementById("matches").innerHTML =
-            "Fehler beim Laden der Daten.";
-        console.error(error);
-    }
-}
+const spieltag = document.getElementById("spieltag").value;
 
-ladeSpiele();
+const response = await fetch(
+  `https://corsproxy.io/?https://api.openligadb.de/getmatchdata/wm26/2026/${spieltag}`
+);
 
-</script>
-
-</body>
-</html>
+Wenn du möchtest, kann ich dir auch den kompletten fertigen Code für deine aktuelle Seite schreiben, den
