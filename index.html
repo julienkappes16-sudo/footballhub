@@ -1,73 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FootballHub</title>
+
 <style>
 body{
-font-family:Arial;
-margin:20px;
-background:#f5f5f5;
-}
-table{
-border-collapse:collapse;
-width:100%;
-background:white;
-}
-th,td{
-border:1px solid #ddd;
-padding:8px;
-text-align:left;
-}
-th{
-background:#e30613;
+font-family:Arial,sans-serif;
+background:#111;
 color:white;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:#1c1c1c;
+}
+
+th{
+background:red;
+padding:12px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #333;
 }
 </style>
 </head>
+
 <body>
 
 <h1>⚽ Bundesliga Tabelle</h1>
 
-<table id="table">
+<table>
 <thead>
 <tr>
 <th>#</th>
-<th>Verein</th>
+<th>Team</th>
 <th>Punkte</th>
 </tr>
 </thead>
-<tbody></tbody>
+
+<tbody id="tableBody"></tbody>
 </table>
 
 <script>
-const API_KEY = "214b20fdc8084deab50f287fbf1da0df";
-fetch(
-"https://api.football-data.org/v4/competitions/BL1/standings",
-{
-headers:{
-"X-Auth-Token":API_KEY
-}
-}
-)
-.then(res=>res.json())
-.then(data=>{
 
-const tbody=document.querySelector("tbody");
+fetch("https://www.openligadb.de/api/getbltable/bl1")
+.then(response => response.json())
+.then(data => {
 
-data.standings[0].table.forEach(team=>{
+const body = document.getElementById("tableBody");
 
-tbody.innerHTML += `
+data.forEach(team => {
+
+body.innerHTML += `
 <tr>
-<td>${team.position}</td>
-<td>${team.team.name}</td>
-<td>${team.points}</td>
+<td>${team.Platz}</td>
+<td>${team.TeamName}</td>
+<td>${team.Punkte}</td>
 </tr>
 `;
 
 });
 
 });
+
 </script>
 
 </body>
